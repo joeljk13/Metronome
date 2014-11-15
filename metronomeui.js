@@ -2,7 +2,6 @@
 
 $(function() {
 
-var rows = [];
 var table = $("table");
 var statusBar = $("#status-bar");
 var statusP = $("#status");
@@ -24,17 +23,28 @@ function hideStatus() {
     statusBar.hide();
 }
 
-function appendRow(row) {
-    table.append(row);
-    rows.push(row);
+function createRow(elem) {
+    // TMP
+    return createDefRow();
 }
 
 function addRow() {
-    var tmp = $(this);
+    for (var elem = $(this); !elem.is("tr"); elem = elem.parent()) { }
+
+    elem.after(createRow(elem));
 }
 
 function removeRow() {
-    var tmp = $(this);
+    // TODO - Make this undoable
+
+    for (var elem = $(this); !elem.is("tr"); elem = elem.parent()) { }
+
+    if (elem.siblings().length === 0) {
+        setStatus("Error: cannot remove only row");
+    }
+    else {
+        elem.remove();
+    }
 }
 
 function setToEdit(elem) {
@@ -132,6 +142,6 @@ function createDefRow() {
         .append(createDefTools());
 }
 
-appendRow(createDefRow());
+table.append(createDefRow());
 
 });
