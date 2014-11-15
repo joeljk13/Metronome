@@ -73,8 +73,36 @@ function setToEditFunc() {
     setToEdit($(this));
 }
 
-function toolsFunc() {
-    setStatus("Sorry, this feature hasn't been implemented yet.");
+function startFunc() {
+    for (var elem = $(this); !elem.is("tr"); elem = elem.parent()) { }
+
+    var sections = [];
+
+    do {
+        var measures = [new Measure({
+            "timeSig": new TimeSig(+elem.children(".beats-per-measure").text(),
+                                   +elem.children(".note-value").text()),
+
+            "BPM": +elem.children(".beats-per-minute").text()
+        })];
+
+        var n = elem.children(".number-of-measures").text();
+
+        measures.length = n.match(/inf(inity?)/i) ? 1 : +n;
+
+        sections.push(new Section(measures));
+    }
+    while ((elem = elem.next()).length !== 0);
+
+    function run(i) {
+        if (i < sections.length) {
+            sections[i].run(function() {
+                run(i + 1);
+            });
+        }
+    }
+
+    run(0);
 }
 
 function createDefTimeSignature() {
@@ -117,8 +145,8 @@ function createDefTools() {
                 .append($("<span>")
                         .append($("<button>")
                                 .attr("type", "button")
-                                .text("Tools")
-                                .on("click", toolsFunc)))
+                                .text("Start")
+                                .on("click", startFunc)))
                 .append($("<span>")
                         .append($("<button>")
                                 .attr("type", "button")
