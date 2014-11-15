@@ -1,6 +1,6 @@
 "use strict";
 
-$(function() {
+(function() {
 
 var table = $("table");
 var statusBar = $("#status-bar");
@@ -171,4 +171,4 @@ function createDefRow() {
 
 table.append(createDefRow());
 
-});
+})();
