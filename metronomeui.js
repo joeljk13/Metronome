@@ -4,6 +4,25 @@ $(function() {
 
 var rows = [];
 var table = $("table");
+var statusBar = $("#status-bar");
+var statusP = $("#status");
+var X = $("<button>")
+    .attr("type", "button")
+    .text("X")
+    .on("click", function() {
+        statusBar.hide();
+    });
+
+statusBar.append(X);
+
+function setStatus(msg) {
+    statusP.text(msg);
+    statusBar.show();
+}
+
+function hideStatus() {
+    statusBar.hide();
+}
 
 function appendRow(row) {
     table.append(row);

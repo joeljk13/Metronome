@@ -1,3 +1,25 @@
+#status-bar {
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 2px;
+    border: 1px solid #000;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background-color: #900;
+    color: #FFF;
+    text-align: center;
+}
+
+#status {
+    margin: 2px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;

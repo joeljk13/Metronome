@@ -4,12 +4,20 @@
         <title>Metronome</title>
 
         <link rel="stylesheet" type="text/css" href="metronome.css"></link>
+
+        <script type="text/javascript" src="jquery.js"></script>
     </head>
 
     <body>
-        <noscript>
-            You must enable Javascript for this metronome to work.
-        </noscript>
+        <div id="status-bar">
+            <p id="status">
+                <noscript>
+                    You must enable Javascript for this metronome to work.
+                </noscript>
+            </p>
+        </div>
+
+        <script type="text/javascript">$("#status-bar").hide();</script>
 
         <table>
             <caption>Metronome</caption>
@@ -39,7 +47,6 @@
         </table>
 
         <script type="text/javascript" src="metronome.js"></script>
-        <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="metronomeui.js"></script>
     </body>
 </html>
