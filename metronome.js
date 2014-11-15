@@ -32,14 +32,10 @@ function log(msg, type) {
 }
 
 // void tick();
-// A metronome tick. Flashes the screen to black and then back to white.
-// TODO - Add sound
+// A metronome tick. Modify as necessary for the page.
+// TODO - Add beat parameter
 function tick() {
-    log("tick!");
-    document.body.style.backgroundColor = "#000000";
-    setTimeout(function() {
-        document.body.style.backgroundColor = "#FFFFFF";
-    }, 50);
+    window.Tick();
 }
 
 // boolean isPositiveNumber(n);

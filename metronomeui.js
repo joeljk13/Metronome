@@ -87,17 +87,18 @@ function startFunc() {
         })];
 
         var n = elem.children(".number-of-measures").text();
+        var isInf = n.match(/inf(inity?)/i) ? true : false;
 
-        measures.length = n.match(/inf(inity?)/i) ? 1 : +n;
+        measures.length = isInf ? 1 : +n;
 
-        sections.push(new Section(measures));
+        sections.push([new Section(measures), isInf ? 0 : 1]);
     }
     while ((elem = elem.next()).length !== 0);
 
     function run(i) {
         if (i < sections.length) {
-            sections[i].run(function() {
-                run(i + 1);
+            sections[i][0].run(function() {
+                run(i + sections[i][1]);
             });
         }
     }
@@ -167,6 +168,22 @@ function createDefRow() {
         .append(createDefBeatsPerMinute())
         .append(createDefNumberOfMeasures())
         .append(createDefTools());
+}
+
+var body = $("body");
+
+window.Tick = function() {
+    body.css({
+        "backgroundColor": "#000"
+    });
+
+    setTimeout(function() {
+        body.css({
+            "backgroundColor": "#FFF"
+        });
+    }, 50);
+
+    // TODO - add sound
 }
 
 table.append(createDefRow());
