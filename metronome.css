@@ -3,13 +3,13 @@ table {
     border-collapse: collapse;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
 td {
     text-align: center;
     border: 1px solid #000;
+    width: 25%;
+}
+
+input {
+    border: 1px solid #000;
+    padding: 2px;
 }
