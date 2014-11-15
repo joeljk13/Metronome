@@ -24,8 +24,7 @@ function hideStatus() {
 }
 
 function createRow(elem) {
-    // TMP
-    return createDefRow();
+    return elem.clone(true);
 }
 
 function addRow() {
@@ -75,7 +74,7 @@ function setToEditFunc() {
 }
 
 function toolsFunc() {
-    log("Tools");
+    setStatus("Sorry, this feature hasn't been implemented yet.");
 }
 
 function createDefTimeSignature() {
@@ -107,7 +106,7 @@ function createDefNumberOfMeasures() {
         .addClass("number-of-measures")
         .append($("<div>")
                 .append($("<span>")
-                    .text("inf")
+                    .text("Infinity")
                     .on("click", setToEditFunc)));
 }
 
