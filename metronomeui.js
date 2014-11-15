@@ -3,11 +3,15 @@
 $(function() {
 
 var rows = [];
-var table = $("#table");
+var table = $("table");
+
+function setToEdit(elem) {
+    elem.replaceWith($("<input>")
+                     .attr("type", "text")
+                     .focus());
+}
 
 function setToEditFunc() {
-    log("Set to edit");
-    return;
     setToEdit($(this));
 }
 
@@ -16,47 +20,45 @@ function toolsFunc() {
 }
 
 function createDefTimeSignature() {
-    return $("<div>")
-        .addClass("cell time-signature")
-        .append($("<span>")
+    return $("<td>")
+        .addClass("time-signature")
+        .append($("<div>")
                 .addClass("beats-per-measure")
                 .text("" + defBeatsPerMeasure)
                 .on("click", setToEditFunc))
-        .append($("<span>")
+        .append($("<div>")
                 .addClass("note-value")
                 .text("" + defNoteValue)
                 .on("click", setToEditFunc));
 }
 
 function createDefBeatsPerMinute() {
-    return $("<div>")
-        .addClass("cell beats-per-minute")
-        .append($("<span>")
+    return $("<td>")
+        .addClass("beats-per-minute")
+        .append($("<div>")
                 .text("" + defBPM)
                 .on("click", setToEditFunc));
 }
 
 function createDefNumberOfMeasures() {
-    return $("<div>")
-        .addClass("cell number-of-measures")
-        .append($("<span>")
+    return $("<td>")
+        .addClass("number-of-measures")
+        .append($("<div>")
                 .text("inf")
                 .on("click", setToEditFunc));
 }
 
 function createDefTools() {
-    return $("<div>")
-        .addClass("cell tools")
+    return $("<td>")
+        .addClass("tools")
         .append($("<button>")
-                .addClass("tools-button")
                 .attr("type", "button")
                 .text("Tools")
                 .on("click", toolsFunc));
 }
 
 function createDefRow() {
-    return $("<div>")
-        .addClass("section")
+    return $("<tr>")
         .append(createDefTimeSignature())
         .append(createDefBeatsPerMinute())
         .append(createDefNumberOfMeasures())
