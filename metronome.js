@@ -35,6 +35,7 @@ function log(msg, type) {
 // A metronome tick. Modify as necessary for the page.
 // TODO - Add beat parameter
 function tick() {
+    log("Tick");
     window.Tick();
 }
 

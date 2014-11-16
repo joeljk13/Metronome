@@ -79,17 +79,36 @@ function startFunc() {
     var sections = [];
 
     do {
-        var measures = [new Measure({
+        var bpm = elem.children(".beats-per-minute").text();
+        var bpm1 = bpm, bpm2 = bpm;
+        var regex = /^\s*(\d+)\s*(to|-)\s*(\d+)\s*$/i;
+        var timeSig = new TimeSig(+elem.children(".beats-per-measure").text(),
+                                  +elem.children(".note-value").text());
+
+        var n = elem.children(".number-of-measures").text();
+        var isInf = n.match(/^inf(inity?)$/i) ? true : false;
+        var measures = [];
+
+        measures.length = isInf ? 1 : +n;
+
+        if (bpm.match(regex)) {
+            bpm1 = +bpm.replace(regex, "$1")
+            bpm2 = +bpm.replace(regex, "$3")
+            bpm = null;
+        }
+        else {
+            bpm1 = bpm2 = null;
+            bpm = new Function("beat", bpm);
+        }
+
+        measures[0] = new Measure({
             "timeSig": new TimeSig(+elem.children(".beats-per-measure").text(),
                                    +elem.children(".note-value").text()),
 
-            "BPM": +elem.children(".beats-per-minute").text()
-        })];
-
-        var n = elem.children(".number-of-measures").text();
-        var isInf = n.match(/inf(inity?)/i) ? true : false;
-
-        measures.length = isInf ? 1 : +n;
+            "BPM": bpm,
+            "initBPM": bpm1,
+            "finalBPM": (bpm1 + (bpm2 - bpm1) / +n)
+        });
 
         sections.push([new Section(measures), isInf ? 0 : 1]);
     }
