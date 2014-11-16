@@ -86,7 +86,7 @@ function startFunc() {
                                   +elem.children(".note-value").text());
 
         var n = elem.children(".number-of-measures").text();
-        var isInf = n.match(/^inf(inity?)$/i) ? true : false;
+        var isInf = n.match(/^\s*inf(inity?)\s*$/i) ? true : false;
         var measures = [];
 
         measures.length = isInf ? 1 : +n;
@@ -98,7 +98,7 @@ function startFunc() {
         }
         else {
             bpm1 = bpm2 = null;
-            bpm = new Function("beat", bpm);
+            bpm = new Function("beat", "return " + bpm);
         }
 
         measures[0] = new Measure({
