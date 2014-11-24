@@ -73,6 +73,8 @@ function setToEditFunc() {
     setToEdit($(this));
 }
 
+var timer;
+
 function startFunc() {
     for (var elem = $(this); !elem.is("tr"); elem = elem.parent()) { }
 
@@ -116,13 +118,23 @@ function startFunc() {
 
     function run(i) {
         if (i < sections.length) {
-            sections[i][0].run(function() {
+            timer = sections[i][0].run(function() {
                 run(i + sections[i][1]);
             });
+        }
+        else {
+            timer = null;
         }
     }
 
     run(0);
+}
+
+function stopFunc() {
+    if (timer) {
+        clearTimeout(timer);
+        timer = null;
+    }
 }
 
 function createDefTimeSignature() {
@@ -167,6 +179,11 @@ function createDefTools() {
                                 .attr("type", "button")
                                 .text("Start")
                                 .on("click", startFunc)))
+                .append($("<span>")
+                        .append($("<button>")
+                                .attr("type", "button")
+                                .text("Stop")
+                                .on("click", stopFunc)))
                 .append($("<span>")
                         .append($("<button>")
                                 .attr("type", "button")

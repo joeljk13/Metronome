@@ -405,6 +405,14 @@ function Section(measures) {
     this.measures = measures;
 }
 
+// NativeTimer Measure.prototype.timer;
+//
+// A timer returned by setTimeout.
+//
+// Whenever the Measure is running, call clearTimeout on this to cancel the
+// running.
+Measure.prototype.timer = null;
+
 // void Measure.prototype.run([callback]);
 //
 // Runs a measure.
@@ -437,17 +445,27 @@ Measure.prototype.run = function(callback) {
             }
             var beatDiff = note.getBeats(timeSig);
             // Approximate the time until the next note
-            setTimeout(callTick, 120000 * beatDiff /
-                       (bpm(beat) + bpm(beat + beatDiff)));
+            this.timer = setTimeout(callTick, 120000 * beatDiff
+                                    / (bpm(beat) + bpm(beat + beatDiff)));
+
             beat += beatDiff;
             ++i;
         }
         else {
+            this.timer = null;
             callback();
         }
     }
     callTick();
 };
+
+// NativeTimer Section.prototype.timer;
+//
+// A timer returned by setTimeout.
+//
+// Whenever the Section is running, call clearTimeout on this to cancel the
+// running.
+Section.prototype.timer = null;
 
 // void Section.prototype.run([callback]);
 //
@@ -464,8 +482,9 @@ Section.prototype.run = function(callback) {
         measures = this.measures,
         len = measures.length;
     function runMeasures() {
-        measures[i++].run(function() {
+        this.timer = measures[i++].run(function() {
             if (i === len) {
+                this.timer = null;
                 callback();
             }
             else {
