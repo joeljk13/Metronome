@@ -1,26 +1,33 @@
 "use strict";
 
-// The defaults. These should be kept constant
+// The defaults. These should be kept constant.
 var defBeatsPerMeasure = 4,
     defNoteValue = 4,
     defBPM = 120;
 
-// boolean isArray(array);
+/* boolean isArray(array);
+ *
+ * Returns whether array is an Array or not. This uses the default
+ * Array.isArray when available, and falls back to a custom implementation when
+ * not.
+ * TODO - when widely supported, only use Array.isArray
+ */
 var isArray = Array.isArray || function(array) {
     return Object.prototype.toString.call(array) === "[object Array]";
 };
 
-// void log(msg [, type]);
-//
-// Logs the message to the console, if possible; otherwise alerts the message.
-//
-// type is used for things like warnings or errors.
-// Possible values:
-//      "log" (Default)
-//      "error"
-//      "warn"
-//      "debug"
-//      Anything else supported by the console
+/* void log(msg [, type]);
+ *
+ * Logs the message to the console, if possible; otherwise alerts the message.
+ *
+ * type is used for things like warnings or errors.
+ * Possible values:
+ *      "log" (Default)
+ *      "error"
+ *      "warn"
+ *      "debug"
+ *      Anything else supported by the console
+ */
 function log(msg, type) {
     type = type || "log";
     if (window.console) {
@@ -31,65 +38,77 @@ function log(msg, type) {
     }
 }
 
-// void tick();
-// A metronome tick. Modify as necessary for the page.
-// TODO - Add beat parameter
+/* void tick();
+ *
+ * A metronome tick. Modify as necessary for the page.
+ * TODO - Add beat parameter
+ */
 function tick() {
     window.Tick();
 }
 
-// boolean isPositiveNumber(n);
+/* boolean isPositiveNumber(n);
+ *
+ * Returns whether n is a positive number.
+ */
 function isPositiveNumber(n) {
     return typeof n === "number" && n > 0;
 }
 
-// boolean isPositiveInteger(n);
+/* boolean isPositiveInteger(n);
+ *
+ * Returns whether n is a postive integer.
+ */
 function isPositiveInteger(n) {
     // May not work for some corner cases, but those shouldn't happen.
     return isPositiveNumber(n) && Math.floor(n) === n;
 }
 
-// boolean isPowerOf2(n);
-// Any values that won't fit in a 32-bit int return false. Values too big are
-// unrealistic anyway.
+/* boolean isPowerOf2(n);
+ *
+ * Any values that won't fit in a 32-bit int return false, but values that big
+ * are unrealistic anyway (who writes music with 1/2.147484e9'th notes?).
+ */
 function isPowerOf2(n) {
     return isPositiveInteger(n) && n < 2147483647 && (n & (n - 1)) === 0;
 }
 
 
-// Object Note
-//
-// A note is the basic block of time for this metronome. It could represent an
-// actual note with pitch, or it could represent a rest. A note always has
-// duration.
-//
-// Properties:
-//
-// Array values
-//
-// values is an array of positive numbers. Each number is the inverse of the
-// kind of note it represents. For example, 4 would be a quarter note, 8 an
-// eigth note, 1 a whole note, 6 a triplet quarter note, etc.
-//
-// boolean isRest
-//
-// isRest is true if the note represents a rest; false otherwise. The
-// metronome does not tick on rests.
+/* Object Note
+ *
+ * A note is the basic block of time for this metronome. It could represent an
+ * actual note with pitch, or it could represent a rest. A note always has
+ * duration.
+ *
+ * Properties:
+ *
+ * Array values
+ *
+ * values is an array of positive numbers. Each number is the inverse of the
+ * kind of note it represents. For example, 4 would be a quarter note, 8 an
+ * eigth note, 1 a whole note, 6 a triplet quarter note, etc.
+ *
+ * boolean isRest
+ *
+ * isRest is true if the note represents a rest; false otherwise. The
+ * metronome does not tick on rests.
+ */
 
 
-// Object Note(values [, isRest]);      (Constructor Function)
-//
-// Creates a new note.
-//
-// values should be an array of positive numbers. If values is not an array, it
-// is treated like an array with values as the only member. If the array has no
-// members or doesn't only contain positive numbers, an exception is throw;
-// otherwise this.values is set to values. Each number in values is a note
-// value, like the members of Note.values. The total duration of a note is the
-// sum of each of its note values, e.g. new Note([4, 8]) would represent a
-// dotted quarter note.
-//
-// this.isRest is set to isRest as a boolean; the default is false.
+/* Object Note(values [, isRest]);      (Constructor Function)
+ *
+ * Creates a new note.
+ *
+ * values should be an array of positive numbers. If values is not an array, it
+ * is treated like an array with values as the only member. If the array has no
+ * members or doesn't only contain positive numbers, an exception is throw;
+ * otherwise this.values is set to values. Each number in values is a note
+ * value, like the members of Note.values. The total duration of a note is the
+ * sum of each of its note values, e.g. new Note([4, 8]) would represent a
+ * dotted quarter note.
+ *
+ * this.isRest is set to isRest as a boolean; the default is false.
+ */
 function Note(values, isRest) {
     if (!isArray(values)) {
         values = [values];
@@ -109,33 +128,35 @@ function Note(values, isRest) {
 }
 
 
-// Object TimeSig
-//
-// TimeSig represents a time signature, like 4 4 or 3 8.
-//
-// Properties:
-//
-// Number beatsPerMeasure
-//
-// The top or first number of the time signature.
-//
-// Number noteValue
-//
-// The bottom or second number of the time signature. noteValue is always a
-// power of 2. Like the members of Note.values, it is the inverse of the kind
-// of note it represents, so e.g. 4 is a quarter note and 8 is an eigth note.
-// It says what kind of note gets the beat.
+/* Object TimeSig
+ *
+ * TimeSig represents a time signature, like 4 4 or 3 8.
+ *
+ * Properties:
+ *
+ * Number beatsPerMeasure
+ *
+ * The top or first number of the time signature.
+ *
+ * Number noteValue
+ *
+ * The bottom or second number of the time signature. noteValue is always a
+ * power of 2. Like the members of Note.values, it is the inverse of the kind
+ * of note it represents, so e.g. 4 is a quarter note and 8 is an eigth note.
+ * It says what kind of note gets the beat.
+ */
 
 
-// Object TimeSig([beatsPerMeasure] [, noteValue]);     (Constructor Function)
-//
-// Creates a new time signature.
-//
-// Sets this.beatsPerMeasure to beatsPerMeasure if beatsPerMeasure is a
-// positive integer, otherwise defBeatsPerMeasure.
-//
-// Sets this.noteValue to noteValue if noteValue is a positive integer power of
-// 2, otherwise defNoteValue.
+/* Object TimeSig([beatsPerMeasure] [, noteValue]);     (Constructor Function)
+ *
+ * Creates a new time signature.
+ *
+ * Sets this.beatsPerMeasure to beatsPerMeasure if beatsPerMeasure is a
+ * positive integer, otherwise defBeatsPerMeasure.
+ *
+ * Sets this.noteValue to noteValue if noteValue is a positive integer power of
+ * 2, otherwise defNoteValue.
+ */
 function TimeSig(beatsPerMeasure, noteValue) {
     if (!isPositiveInteger(beatsPerMeasure)) {
         beatsPerMeasure = defBeatsPerMeasure;
@@ -147,12 +168,13 @@ function TimeSig(beatsPerMeasure, noteValue) {
     this.noteValue = noteValue;
 }
 
-// Number Note.prototype.getBeats(TimeSig timeSig);
-//
-// Using the given time signature, returns the total number of beats that this
-// lasts for.
-//
-// Throws an exception if timeSig is not actually an instance of TimeSig.
+/* Number Note.prototype.getBeats(TimeSig timeSig);
+ *
+ * Using the given time signature, returns the total number of beats that this
+ * lasts for.
+ *
+ * Throws an exception if timeSig is not actually an instance of TimeSig.
+ */
 Note.prototype.getBeats = function(timeSig) {
     if (!timeSig instanceof TimeSig) {
         throw new Error("timeSig is not an instance of function TimeSig");
@@ -173,23 +195,24 @@ Note.prototype.getBeats = function(timeSig) {
     return sum * timeSig.noteValue / lcm;
 }
 
-// boolean isValidBPMFunction(func, TimeSig timeSig);
-//
-// Returns true if func seems to be a valid beats per measure (BPM) function
-// for the given time signature; false otherwise.
-//
-// Qualitites of a BPM function:
-//      Has the form: Number func(Number);
-//      Valid input arguments are all positive numbers (unit: beats) (meaning:
-//          the number of beats into a measure)
-//      Always returns a positive integer (unit: beats per minute) (meaning:
-//          the instantaneous beats per measure at the given beat)
-//      Is a pure function
-//      func(0) is the instantaneous BPM at the beginning of a measure
-//      func(timeSig.beatsPerMeasure) is the instantaneous BPM at the end of a
-//          measure/start of the next measure
-//
-// If timeSig is not an instance of TimeSig, throws an exception.
+/* boolean isValidBPMFunction(func, TimeSig timeSig);
+ *
+ * Returns true if func seems to be a valid beats per measure (BPM) function
+ * for the given time signature; false otherwise.
+ *
+ * Qualitites of a BPM function:
+ *      Has the form: Number func(Number);
+ *      Valid input arguments are all positive numbers (unit: beats) (meaning:
+ *          the number of beats into a measure)
+ *      Always returns a positive integer (unit: beats per minute) (meaning:
+ *          the instantaneous beats per measure at the given beat)
+ *      Is a pure function
+ *      func(0) is the instantaneous BPM at the beginning of a measure
+ *      func(timeSig.beatsPerMeasure) is the instantaneous BPM at the end of a
+ *          measure/start of the next measure
+ *
+ * If timeSig is not an instance of TimeSig, throws an exception.
+ */
 function isValidBPMFunction(func, timeSig) {
     if (typeof func !== "function") {
         return false;
@@ -208,64 +231,66 @@ function isValidBPMFunction(func, timeSig) {
 }
 
 
-// Object Measure
-//
-// Represents a measure of music.
-//
-// Properties:
-//
-// TimeSig timeSig
-//
-// The time signature throughout the measure. The time signature is always
-// constant throughout a measure, although different measures can very easily
-// have different time signatures.
-//
-// Function BPM
-//
-// The BPM function for the measure (see isValidBPMFunction).
-//
-// Number initBPM 
-//
-// The instantaneous beats per measure at the beginning of the measure. Should
-// be equal to BPM(0).
-//
-// Number finalBPM
-//
-// The instantaneous beats per measure at the end of the measure/beginning of
-// the next measure. Should be equal to BPM(timeSig.beatsPerMeasure).
-//
-// Array rhythm
-//
-// An array of instances of Note. These represent the rhythm of the measure and
-// where ticks should occur.
+/* Object Measure
+ *
+ * Represents a measure of music.
+ *
+ * Properties:
+ *
+ * TimeSig timeSig
+ *
+ * The time signature throughout the measure. The time signature is always
+ * constant throughout a measure, although different measures can very easily
+ * have different time signatures.
+ *
+ * Function BPM
+ *
+ * The BPM function for the measure (see isValidBPMFunction).
+ *
+ * Number initBPM
+ *
+ * The instantaneous beats per measure at the beginning of the measure. Should
+ * be equal to BPM(0).
+ *
+ * Number finalBPM
+ *
+ * The instantaneous beats per measure at the end of the measure/beginning of
+ * the next measure. Should be equal to BPM(timeSig.beatsPerMeasure).
+ *
+ * Array rhythm
+ *
+ * An array of instances of Note. These represent the rhythm of the measure and
+ * where ticks should occur.
+ */
 
 
-// Object Measure([settings]);      (Constructor Function)
-//
-// Creates a new measure, with its properties defined by settings.
-//
-// If settings is not an object, it is treated as { }. If settings is modified
-// after the creation of a measure, it will not affect the properties of the
-// measure.
-//
-// this.timeSig is set to settings.timeSig, if it is an instance of TimeSig,
-// or otherwise the default time signature.
-//
-// If settings.BPM is a string, it is treated as new Function(setttings.BPM).
-// If isValidBPMFunction(settings.BPM), this.BPM is set to settings.BPM. If
-// settings.BPM is a positive integer, settings.BPM is a function that returns
-// settings.BPM. If this.BPM has still not be defined, and initBPM and finalBPM
-// and both positive integers, then this.BPM is set to a function that
-// calculates a linear change in tempo from initBPM at the beginning of the
-// measure to finalBPM at the end of the measure. Otherwise, this.BPM is set to
-// return defBPM.
-//
-// If settings.rhythm is a valid rhythm (i.e. an array of instances of Note),
-// and if the total duration is equal to the duration of the measure,
-// this.rhythm is set to settings.rhythm. If settings.rhythm is given but not
-// valid, an exception is thrown. Otherwise, this.rhythm is set to the
-// default, which is timeSig.beatsPerMeasure notes, each with a note value of
-// timeSig.noteValue.
+/* Object Measure([settings]);      (Constructor Function)
+ *
+ * Creates a new measure, with its properties defined by settings.
+ *
+ * If settings is not an object, it is treated as { }. If settings is modified
+ * after the creation of a measure, it will not affect the properties of the
+ * measure.
+ *
+ * this.timeSig is set to settings.timeSig, if it is an instance of TimeSig,
+ * or otherwise the default time signature.
+ *
+ * If settings.BPM is a string, it is treated as new Function(setttings.BPM).
+ * If isValidBPMFunction(settings.BPM), this.BPM is set to settings.BPM. If
+ * settings.BPM is a positive integer, settings.BPM is a function that returns
+ * settings.BPM. If this.BPM has still not be defined, and initBPM and finalBPM
+ * and both positive integers, then this.BPM is set to a function that
+ * calculates a linear change in tempo from initBPM at the beginning of the
+ * measure to finalBPM at the end of the measure. Otherwise, this.BPM is set to
+ * return defBPM.
+ *
+ * If settings.rhythm is a valid rhythm (i.e. an array of instances of Note),
+ * and if the total duration is equal to the duration of the measure,
+ * this.rhythm is set to settings.rhythm. If settings.rhythm is given but not
+ * valid, an exception is thrown. Otherwise, this.rhythm is set to the
+ * default, which is timeSig.beatsPerMeasure notes, each with a note value of
+ * timeSig.noteValue.
+ */
 function Measure(settings) {
     if (typeof settings !== "object") {
         settings = { };
@@ -345,31 +370,33 @@ function Measure(settings) {
 }
 
 
-// Object Section
-//
-// A section of the music. Includes anywhere from 1 to several measures.
-//
-// Properties:
-//
-// Array measures
-//
-// An array of instances of Measure. The measures don't necessarily have
-// anything in common, but they easily could.
+/* Object Section
+ *
+ * A section of the music. Includes anywhere from 1 to several measures.
+ *
+ * Properties:
+ *
+ * Array measures
+ *
+ * An array of instances of Measure. The measures don't necessarily have
+ * anything in common, but they easily could.
+ */
 
 
-// Object Section(measures [, measure2 [, ...]]);       (Constructor Function)
-//
-// Creates a section of music with the given measures.
-//
-// The measures can be given as an array in parameter measures, or they can be
-// given as a list. At least the first element must be an instance of Measure.
-// If this isn't true, throws an exception.
-//
-// If an element (besides the first) in the array used isn't an instance of
-// Measure, the last valid measure is extended. The same time signature,
-// rhythm, and BPM function are used, but the BPM function is shifted so that
-// BPM(0) represents the beginning of this measure. Changing a measure will
-// affect any measures after it that were extended from it.
+/* Object Section(measures [, measure2 [, ...]]);       (Constructor Function)
+ *
+ * Creates a section of music with the given measures.
+ *
+ * The measures can be given as an array in parameter measures, or they can be
+ * given as a list. At least the first element must be an instance of Measure.
+ * If this isn't true, throws an exception.
+ *
+ * If an element (besides the first) in the array used isn't an instance of
+ * Measure, the last valid measure is extended. The same time signature,
+ * rhythm, and BPM function are used, but the BPM function is shifted so that
+ * BPM(0) represents the beginning of this measure. Changing a measure will
+ * affect any measures after it that were extended from it.
+ */
 function Section(measures) {
     if (!isArray(measures)) {
         measures = Array.prototype.slice.call(arguments);
@@ -404,17 +431,18 @@ function Section(measures) {
     this.measures = measures;
 }
 
-// void Measure.prototype.run([callback]);
-//
-// Runs a measure.
-//
-// If callback is a string, it is treated as new Function(callback). If
-// callback is a function, it is called when the measure is finished running.
-//
-// To have the metronome tick on the next downbeat, use run(tick) or
-// run(function() { tick(); /* More code */ });
-//
-// Changing the measure while it's being run will not change what is run.
+/* void Measure.prototype.run([callback]);
+ *
+ * Runs a measure.
+ *
+ * If callback is a string, it is treated as new Function(callback). If
+ * callback is a function, it is called when the measure is finished running.
+ *
+ * To have the metronome tick on the next downbeat, use run(tick) or
+ * run(function() { tick(); [More code] });
+ *
+ * Changing the measure while it's being run will not change what is run.
+ */
 Measure.prototype.run = function(callback) {
     if (typeof callback === "string") {
         callback = new Function(callback);
@@ -448,10 +476,11 @@ Measure.prototype.run = function(callback) {
     callTick();
 };
 
-// void Section.prototype.run([callback]);
-//
-// Works just like Measure.prototype.run (see there for details), but runs an
-// entire section. Each measure is run right after the previous one is done.
+/* void Section.prototype.run([callback]);
+ *
+ * Works just like Measure.prototype.run (see there for details), but runs an
+ * entire section. Each measure is run right after the previous one is done.
+ */
 Section.prototype.run = function(callback) {
     if (typeof callback === "string") {
         callback = new Function(callback);
